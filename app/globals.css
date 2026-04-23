@@ -1,0 +1,181 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --cyan: #00eaff;
+  --cyan-dim: rgba(0, 234, 255, 0.4);
+  --cyan-glow: rgba(0, 234, 255, 0.22);
+  --cyan-border: rgba(0, 234, 255, 0.28);
+  --hud-bg: #04060a;
+  --panel-bg: rgba(0, 18, 32, 0.62);
+  --violet: #aa44ff;
+  --green-neon: #00ffaa;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--hud-bg);
+  color: var(--cyan);
+  font-family: 'Courier New', monospace;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+}
+
+/* ── Glass Panel Base ─────────────────────────────────────── */
+.glass-panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--cyan-border);
+  border-radius: 10px;
+  backdrop-filter: blur(6px);
+  box-shadow:
+    0 0 18px var(--cyan-glow),
+    inset 0 0 20px rgba(0, 234, 255, 0.03);
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.glass-panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 234, 255, 0.6), transparent);
+  pointer-events: none;
+}
+
+.glass-panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(0,234,255,0.04) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.glass-panel:hover {
+  border-color: rgba(0, 234, 255, 0.7);
+  box-shadow:
+    0 0 32px rgba(0, 234, 255, 0.28),
+    0 0 60px rgba(0, 234, 255, 0.08),
+    inset 0 0 30px rgba(0, 234, 255, 0.06);
+  transform: scale(1.012);
+}
+
+/* ── Scanlines overlay ───────────────────────────────────── */
+.scanlines {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 234, 255, 0.012) 2px,
+    rgba(0, 234, 255, 0.012) 4px
+  );
+}
+
+/* ── Panel label ─────────────────────────────────────────── */
+.panel-label {
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  color: rgba(0, 234, 255, 0.5);
+  text-transform: uppercase;
+  padding: 8px 10px 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.panel-label::before {
+  content: '';
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 6px var(--cyan);
+  flex-shrink: 0;
+}
+
+/* ── Neon text glow ──────────────────────────────────────── */
+.neon-text {
+  color: var(--cyan);
+  text-shadow: 0 0 8px var(--cyan), 0 0 20px rgba(0,234,255,0.4);
+}
+
+/* ── Mode button ─────────────────────────────────────────── */
+.mode-btn {
+  font-size: 8px;
+  letter-spacing: 0.15em;
+  padding: 4px 10px;
+  background: rgba(0, 18, 32, 0.8);
+  border: 1px solid rgba(0, 234, 255, 0.3);
+  color: rgba(0, 234, 255, 0.5);
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+}
+
+.mode-btn:hover, .mode-btn.active {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  background: rgba(0, 234, 255, 0.1);
+  box-shadow: 0 0 10px rgba(0, 234, 255, 0.2);
+}
+
+/* ── Stat row ────────────────────────────────────────────── */
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 0;
+  border-bottom: 1px solid rgba(0, 234, 255, 0.07);
+  font-size: 9px;
+}
+
+.stat-key { color: rgba(0, 234, 255, 0.4); letter-spacing: 0.1em; }
+.stat-val { color: var(--cyan); font-weight: bold; }
+
+/* ── Status dot ──────────────────────────────────────────── */
+.status-online { background: #00ff88; box-shadow: 0 0 6px #00ff88; }
+.status-warn   { background: #ffaa00; box-shadow: 0 0 6px #ffaa00; }
+.status-error  { background: #ff4455; box-shadow: 0 0 6px #ff4455; }
+
+/* ── Geo map styles ──────────────────────────────────────── */
+.geo-pin {
+  animation: geoPulse 2s ease-in-out infinite;
+}
+@keyframes geoPulse {
+  0%, 100% { r: 4; opacity: 1; }
+  50% { r: 7; opacity: 0.5; }
+}
+
+/* ── Holographic flicker ─────────────────────────────────── */
+@keyframes flicker {
+  0%, 95%, 100% { opacity: 1; }
+  96% { opacity: 0.85; }
+  97% { opacity: 1; }
+  98% { opacity: 0.7; }
+  99% { opacity: 1; }
+}
+.holo-flicker { animation: flicker 4s steps(1) infinite; }
+
+/* ── Ring animations ─────────────────────────────────────── */
+@keyframes ringA { to { transform: rotate(360deg); } }
+@keyframes ringB { to { transform: rotate(-360deg); } }
+.ring-a { animation: ringA 3s linear infinite; }
+.ring-b { animation: ringB 5s linear infinite; }
+
+/* ── Recharts custom ─────────────────────────────────────── */
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: rgba(0, 234, 255, 0.07) !important;
+}
+.recharts-text { fill: rgba(0, 234, 255, 0.4) !important; font-size: 8px !important; }
+.recharts-tooltip-wrapper { z-index: 100; }
