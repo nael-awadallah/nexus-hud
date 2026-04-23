@@ -20,12 +20,11 @@ export default function TopBar() {
   const s = String(uptime % 60).padStart(2, '0')
 
   return (
-    <div className="flex items-center justify-between px-4 h-7 border-b"
-      style={{ background: 'rgba(0,8,18,0.8)', borderColor: 'rgba(0,234,255,0.15)' }}>
+    <div className="hud-topbar">
 
-      <span className="text-[8px] tracking-[0.2em]" style={{ color: 'rgba(0,234,255,0.4)' }}>
+      <div className="hud-kicker">
         NEXUS-7 / AI CONTROL MATRIX / SECTOR 04
-      </span>
+      </div>
 
       <div className="flex items-center gap-2">
         {MODES.map(m => (
@@ -36,10 +35,10 @@ export default function TopBar() {
         ))}
       </div>
 
-      <div className="flex items-center gap-6">
-        <span className="text-[9px] tracking-widest neon-text">{clock}</span>
-        <span className="text-[8px] tracking-[0.15em]" style={{ color: 'rgba(0,234,255,0.4)' }}>
-          UPTIME: <span style={{ color: 'var(--cyan)' }}>{h}:{m}:{s}</span>
+      <div className="flex items-center gap-6 justify-self-end">
+        <span className="hud-mono neon-text text-sm tracking-[0.28em]">{clock}</span>
+        <span className="hud-kicker">
+          UPTIME: <span className="hud-value">{h}:{m}:{s}</span>
         </span>
       </div>
     </div>

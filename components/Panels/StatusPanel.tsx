@@ -17,13 +17,13 @@ export default function StatusPanel() {
         {systemStatuses.map(s => {
           const st = STATUS_STYLE[s.status]
           return (
-            <div key={s.label} className="flex items-center gap-2 py-[3px]">
-              <div className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                style={{ background: st.dot, boxShadow: `0 0 5px ${st.dot}` }} />
-              <span style={{ fontSize: 9, color: 'rgba(0,234,255,0.55)', letterSpacing: '0.1em', flex: 1 }}>
+            <div key={s.label} className="flex items-center gap-2 py-[7px]">
+              <div className="w-2 h-2 rounded-full flex-shrink-0"
+                style={{ background: st.dot, boxShadow: `0 0 8px ${st.dot}` }} />
+              <span className="hud-kicker" style={{ color: 'rgba(172,220,242,0.66)', flex: 1, letterSpacing: '0.16em' }}>
                 {s.label}
               </span>
-              <span style={{ fontSize: 9, color: st.text, letterSpacing: '0.1em' }}>{st.label}</span>
+              <span className="hud-value" style={{ fontSize: 12, color: st.text }}>{st.label}</span>
             </div>
           )
         })}

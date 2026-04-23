@@ -40,9 +40,7 @@ export default function HUDLayout() {
   }, [])
 
   return (
-    <div ref={containerRef}
-      className="relative w-full h-screen overflow-hidden"
-      style={{ background: 'var(--hud-bg)' }}>
+    <div ref={containerRef} className="hud-shell">
 
       {/* Three.js WebGL background */}
       <ThreeScene mouseRef={mouseRef} />
@@ -56,14 +54,7 @@ export default function HUDLayout() {
       </div>
 
       {/* Main grid */}
-      <div className="relative z-10 p-3"
-        style={{
-          height: 'calc(100vh - 28px)',
-          display: 'grid',
-          gridTemplateColumns: '210px 1fr 170px',
-          gridTemplateRows: 'auto auto auto auto',
-          gap: 10,
-        }}>
+      <div className="hud-grid">
 
         {/* AI Core — spans 2 rows */}
         <div style={{ gridColumn: 1, gridRow: '1 / 3' }}>

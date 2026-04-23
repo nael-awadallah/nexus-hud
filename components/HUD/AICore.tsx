@@ -6,18 +6,25 @@ export default function AICore() {
   const { stats, flickering } = useHUDStore()
 
   return (
-    <GlassPanel label="AI CORE MODULE" className="flex flex-col items-center py-4 px-3" delay={0.1}>
+    <GlassPanel label="AI CORE MODULE" className="flex flex-col items-center px-5 py-5" delay={0.1}>
       {/* Chip + rings */}
-      <div className="relative w-28 h-28 flex items-center justify-center mb-3">
+      <div className="relative mb-5 flex h-36 w-36 items-center justify-center">
         {/* Outer ring */}
-        <div className="absolute w-28 h-28 rounded-full border border-cyan-400/20 ring-b"
-          style={{ borderRightColor: 'rgba(0,180,255,0.5)', borderTopColor: 'transparent', borderBottomColor: 'transparent' }} />
+        <div className="ring-b absolute h-36 w-36 rounded-full border border-cyan-400/20"
+          style={{ borderRightColor: 'rgba(182,227,249,0.6)', borderTopColor: 'transparent', borderBottomColor: 'transparent' }} />
         {/* Inner ring */}
-        <div className="absolute w-24 h-24 rounded-full border border-cyan-400/30 ring-a"
-          style={{ borderTopColor: '#00eaff' }} />
+        <div className="ring-a absolute h-30 w-30 rounded-full border border-cyan-400/30"
+          style={{ borderTopColor: 'rgba(226,244,255,0.94)', width: 122, height: 122 }} />
+        <div
+          className="absolute inset-6 rounded-full"
+          style={{
+            background: 'radial-gradient(circle, rgba(130,210,244,0.16), transparent 62%)',
+            filter: 'blur(10px)',
+          }}
+        />
 
         {/* Chip SVG */}
-        <svg width="64" height="64" viewBox="0 0 64 64" className={flickering ? 'holo-flicker' : ''}>
+        <svg width="84" height="84" viewBox="0 0 64 64" className={flickering ? 'holo-flicker' : ''}>
           <defs>
             <filter id="glow">
               <feGaussianBlur stdDeviation="2" result="blur" />
@@ -25,11 +32,11 @@ export default function AICore() {
             </filter>
           </defs>
           <rect x="14" y="14" width="36" height="36" rx="5"
-            fill="none" stroke="rgba(0,234,255,0.45)" strokeWidth="1.2" filter="url(#glow)" />
+            fill="rgba(6,16,24,0.55)" stroke="rgba(188,231,249,0.48)" strokeWidth="1.2" filter="url(#glow)" />
           <rect x="19" y="19" width="26" height="26" rx="3"
-            fill="rgba(0,40,70,0.8)" stroke="#00eaff" strokeWidth="0.8" />
-          <text x="32" y="37" textAnchor="middle" fontFamily="Courier New"
-            fontSize="13" fontWeight="700" fill="#00eaff" letterSpacing="2" filter="url(#glow)">
+            fill="rgba(11,26,39,0.96)" stroke="rgba(223,246,255,0.9)" strokeWidth="0.8" />
+          <text x="32" y="37" textAnchor="middle" fontFamily="var(--font-display)"
+            fontSize="13" fontWeight="700" fill="#dff5ff" letterSpacing="1.4" filter="url(#glow)">
             AI
           </text>
           {/* Pins */}
@@ -48,13 +55,13 @@ export default function AICore() {
         </svg>
 
         {/* Pulse ring */}
-        <div className="absolute w-32 h-32 rounded-full animate-ping"
-          style={{ border: '1px solid rgba(0,234,255,0.12)' }} />
+        <div className="absolute h-40 w-40 rounded-full animate-ping"
+          style={{ border: '1px solid rgba(174,226,249,0.08)' }} />
       </div>
 
-      <div className="text-xs tracking-widest neon-text mb-1">NEXUS AI v7.4</div>
-      <div className={`text-[9px] tracking-widest mb-4 ${flickering ? 'opacity-30' : 'opacity-60'}`}
-        style={{ color: 'var(--cyan)' }}>
+      <div className="hud-heading neon-text mb-1 text-2xl">NEXUS AI v7.4</div>
+      <div className={`hud-kicker mb-5 ${flickering ? 'opacity-30' : 'opacity-60'}`}
+        style={{ color: 'var(--cyan-soft)' }}>
         ● ONLINE — OPTIMAL
       </div>
 

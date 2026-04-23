@@ -26,6 +26,7 @@ export default function GlassPanel({
       transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] }}
       whileHover={{ scale: 1.012 }}
     >
+      <div className="panel-corners" />
       {label && <div className="panel-label">{label}</div>}
       {children}
     </motion.div>
