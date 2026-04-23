@@ -2,12 +2,12 @@
 import { useMemo, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
-  BlendFunction,
   Bloom,
   DepthOfField,
   EffectComposer,
   Vignette,
 } from "@react-three/postprocessing";
+import { BlendFunction } from "postprocessing";
 import * as THREE from "three";
 
 type MouseRef = React.RefObject<[number, number]>;

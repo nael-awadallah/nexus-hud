@@ -1,7 +1,4 @@
-import dynamic from 'next/dynamic'
-
-// Full SSR disabled for HUD (needs window, WebGL)
-const HUDLayout = dynamic(() => import('@/components/HUD/HUDLayout'), { ssr: false })
+import HUDLayout from '@/components/HUD/HUDLayout'
 
 export default function Page() {
   return <HUDLayout />
