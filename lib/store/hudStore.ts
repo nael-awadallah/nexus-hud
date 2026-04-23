@@ -1,22 +1,15 @@
 import { create } from "zustand";
-
-export type DataMode = "alpha" | "beta" | "delta";
-
-export interface GeoNode {
-  id: string;
-  name: string;
-  lat: number;
-  lng: number;
-  type: "primary" | "relay" | "sensor";
-  status: "online" | "warn" | "offline";
-  ping: number;
-  load: number;
-}
-
-export interface SystemStatus {
-  label: string;
-  status: "online" | "warn" | "error";
-}
+import { INITIAL_GEO_NODES } from "../data/geoNodes";
+import type {
+  CommentarySource,
+  DataMode,
+  GeoNode,
+  ModelStatus,
+  ModelView,
+  RemoteDataStatus,
+  SystemStatus,
+  VisitorLocation,
+} from "../types/hud";
 
 export interface HUDState {
   mode: DataMode;
@@ -36,95 +29,37 @@ export interface HUDState {
   systemStatuses: SystemStatus[];
   uptime: number;
   flickering: boolean;
+  modelStatus: ModelStatus;
+  modelView: ModelView;
+  modelAutospin: boolean;
+  modelInteractions: number;
+  lastModelGesture: string;
+  visitorLocation: VisitorLocation | null;
+  geoContextStatus: RemoteDataStatus;
+  geoContextError: string | null;
+  aiCommentary: string;
+  aiCommentaryStatus: RemoteDataStatus;
+  aiCommentarySource: CommentarySource;
+  aiCommentaryUpdatedAt: string | null;
+  aiCommentaryError: string | null;
 
   // Actions
   setMode: (mode: DataMode) => void;
   tick: () => void;
   selectGeoNode: (id: string | null) => void;
+  setModelStatus: (status: ModelStatus) => void;
+  setModelView: (view: ModelView) => void;
+  toggleModelAutospin: () => void;
+  registerModelGesture: (gesture: string) => void;
+  setVisitorLocation: (visitorLocation: VisitorLocation | null) => void;
+  setGeoContextStatus: (status: RemoteDataStatus, error?: string | null) => void;
+  setAICommentary: (payload: {
+    commentary: string;
+    generatedAt: string;
+    source: CommentarySource;
+  }) => void;
+  setAICommentaryStatus: (status: RemoteDataStatus, error?: string | null) => void;
 }
-
-const INITIAL_GEO_NODES: GeoNode[] = [
-  {
-    id: "sg01",
-    name: "SINGAPORE-01",
-    lat: 1.35,
-    lng: 103.82,
-    type: "primary",
-    status: "online",
-    ping: 12,
-    load: 78,
-  },
-  {
-    id: "ny02",
-    name: "NEW YORK-02",
-    lat: 40.71,
-    lng: -74.01,
-    type: "primary",
-    status: "online",
-    ping: 8,
-    load: 62,
-  },
-  {
-    id: "ld03",
-    name: "LONDON-03",
-    lat: 51.51,
-    lng: -0.13,
-    type: "relay",
-    status: "online",
-    ping: 15,
-    load: 44,
-  },
-  {
-    id: "tk04",
-    name: "TOKYO-04",
-    lat: 35.68,
-    lng: 139.69,
-    type: "relay",
-    status: "warn",
-    ping: 31,
-    load: 91,
-  },
-  {
-    id: "sy05",
-    name: "SYDNEY-05",
-    lat: -33.87,
-    lng: 151.21,
-    type: "sensor",
-    status: "online",
-    ping: 22,
-    load: 35,
-  },
-  {
-    id: "sa06",
-    name: "SAO PAULO-06",
-    lat: -23.55,
-    lng: -46.63,
-    type: "sensor",
-    status: "online",
-    ping: 44,
-    load: 57,
-  },
-  {
-    id: "am07",
-    name: "AMMAN-07",
-    lat: 31.95,
-    lng: 35.93,
-    type: "primary",
-    status: "online",
-    ping: 18,
-    load: 83,
-  },
-  {
-    id: "du08",
-    name: "DUBAI-08",
-    lat: 25.2,
-    lng: 55.27,
-    type: "relay",
-    status: "warn",
-    ping: 26,
-    load: 71,
-  },
-];
 
 const rng = (v: number, range: number) =>
   Math.min(99, Math.max(1, v + (Math.random() - 0.5) * range));
@@ -154,9 +89,54 @@ export const useHUDStore = create<HUDState>((set, get) => ({
   ],
   uptime: 0,
   flickering: false,
+  modelStatus: "booting",
+  modelView: "orbit",
+  modelAutospin: true,
+  modelInteractions: 0,
+  lastModelGesture: "Viewer link established",
+  visitorLocation: null,
+  geoContextStatus: "idle",
+  geoContextError: null,
+  aiCommentary: "Awaiting live telemetry commentary from the gateway.",
+  aiCommentaryStatus: "idle",
+  aiCommentarySource: "system",
+  aiCommentaryUpdatedAt: null,
+  aiCommentaryError: null,
 
   setMode: (mode) => set({ mode }),
   selectGeoNode: (id) => set({ geoSelected: id }),
+  setModelStatus: (status) => set({ modelStatus: status }),
+  setModelView: (view) => set({ modelView: view }),
+  toggleModelAutospin: () => set((state) => ({ modelAutospin: !state.modelAutospin })),
+  registerModelGesture: (gesture) =>
+    set((state) => ({
+      lastModelGesture: gesture,
+      modelInteractions: state.modelInteractions + 1,
+    })),
+  setVisitorLocation: (visitorLocation) =>
+    set((state) => ({
+      visitorLocation,
+      geoSelected: state.geoSelected ?? visitorLocation?.nearestNodeId ?? null,
+      geoContextError: null,
+    })),
+  setGeoContextStatus: (status, error = null) =>
+    set({
+      geoContextStatus: status,
+      geoContextError: error,
+    }),
+  setAICommentary: ({ commentary, generatedAt, source }) =>
+    set({
+      aiCommentary: commentary,
+      aiCommentarySource: source,
+      aiCommentaryUpdatedAt: generatedAt,
+      aiCommentaryStatus: "ready",
+      aiCommentaryError: null,
+    }),
+  setAICommentaryStatus: (status, error = null) =>
+    set({
+      aiCommentaryStatus: status,
+      aiCommentaryError: error,
+    }),
 
   tick: () => {
     const s = get();

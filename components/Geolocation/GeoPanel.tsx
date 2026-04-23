@@ -1,8 +1,9 @@
 'use client'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import GlassPanel from '../HUD/GlassPanel'
-import { useHUDStore, GeoNode } from '@/lib/store/hudStore'
+import { useHUDStore } from '@/lib/store/hudStore'
+import type { GeoNode } from '@/lib/types/hud'
 
 // Equirectangular projection: lng/lat → svg x/y within a 320×160 map
 const MAP_W = 320, MAP_H = 155
@@ -43,7 +44,7 @@ M40,78 L52,74 L64,76 L68,84 L66,92 L56,96 L44,92 L38,84 Z
 `
 
 export default function GeoPanel() {
-  const { geoNodes, geoSelected, selectGeoNode } = useHUDStore()
+  const { geoNodes, geoSelected, selectGeoNode, visitorLocation, geoContextStatus } = useHUDStore()
   const [pulseFrame, setPulseFrame] = useState(0)
   const [connections, setConnections] = useState<[string,string][]>([])
 
@@ -62,6 +63,7 @@ export default function GeoPanel() {
   }, [geoNodes])
 
   const selectedNode = geoSelected ? geoNodes.find(n => n.id === geoSelected) : null
+  const visitorCoords = visitorLocation ? project(visitorLocation.latitude, visitorLocation.longitude) : null
 
   return (
     <GlassPanel delay={0.45} className="col-span-full"
@@ -159,6 +161,23 @@ export default function GeoPanel() {
                 </g>
               )
             })}
+
+            {visitorCoords && (
+              <g aria-label="Visitor geolocation marker">
+                <circle cx={visitorCoords[0]} cy={visitorCoords[1]} r={15}
+                  fill="none" stroke="rgba(217,245,255,0.28)" strokeWidth={0.7}
+                  className="geo-pin" />
+                <circle cx={visitorCoords[0]} cy={visitorCoords[1]} r={6}
+                  fill="rgba(217,245,255,0.96)" opacity={0.95} />
+                <circle cx={visitorCoords[0]} cy={visitorCoords[1]} r={2.4}
+                  fill="#08131d" opacity={0.88} />
+                <text x={visitorCoords[0]} y={visitorCoords[1] + 19} textAnchor="middle"
+                  fontFamily="Courier New" fontSize={5.2}
+                  fill="rgba(217,245,255,0.9)" letterSpacing={0.7}>
+                  YOU ARE HERE
+                </text>
+              </g>
+            )}
           </svg>
 
           {/* Map corner labels */}
@@ -170,6 +189,13 @@ export default function GeoPanel() {
           </div>
           <div className="absolute top-1 right-2" style={{ fontSize: 7, color: 'rgba(0,234,255,0.25)', letterSpacing: '0.1em' }}>
             180°E
+          </div>
+          <div className="absolute left-2 bottom-2 geo-visitor-chip">
+            {visitorLocation
+              ? `${visitorLocation.city ?? 'UNKNOWN'} / ${visitorLocation.country ?? 'UNMAPPED'}`
+              : geoContextStatus === 'loading'
+                ? 'LOCATING VISITOR...'
+                : 'VISITOR GEO UNAVAILABLE'}
           </div>
         </div>
 
@@ -266,6 +292,7 @@ export default function GeoPanel() {
           )
         })}
         <span style={{ fontSize: 8, color: 'rgba(0,234,255,0.25)', marginLeft: 'auto', letterSpacing: '0.1em' }}>
+          {visitorLocation?.nearestNodeId ? `NEAREST ${visitorLocation.nearestNodeId.toUpperCase()} // ` : ''}
           {geoNodes.length} NODES REGISTERED
         </span>
       </div>
