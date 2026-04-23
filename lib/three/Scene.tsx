@@ -1,18 +1,20 @@
 "use client";
-import { useRef, useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
-  EffectComposer,
+  BlendFunction,
   Bloom,
   DepthOfField,
+  EffectComposer,
   Vignette,
-  BlendFunction,
 } from "@react-three/postprocessing";
 import * as THREE from "three";
 
+type MouseRef = React.RefObject<[number, number]>;
+
 // ── Instanced particle field ──────────────────────────────────────
 function Particles({ count = 300 }: { count?: number }) {
-  const meshRef = useRef<THREE.InstancedMesh>(null);
+  const meshRef = useRef<THREE.InstancedMesh | null>(null);
   const dummy = useMemo(() => new THREE.Object3D(), []);
 
   const data = useMemo(
@@ -34,7 +36,9 @@ function Particles({ count = 300 }: { count?: number }) {
   );
 
   useFrame(() => {
-    if (!meshRef.current) return;
+    const mesh = meshRef.current;
+    if (!mesh) return;
+
     data.forEach((p, i) => {
       p.position.add(p.velocity);
       if (Math.abs(p.position.x) > 10) p.velocity.x *= -1;
@@ -43,9 +47,9 @@ function Particles({ count = 300 }: { count?: number }) {
       dummy.position.copy(p.position);
       dummy.scale.setScalar(p.scale);
       dummy.updateMatrix();
-      meshRef.current!.setMatrixAt(i, dummy.matrix);
+      mesh.setMatrixAt(i, dummy.matrix);
     });
-    meshRef.current.instanceMatrix.needsUpdate = true;
+    mesh.instanceMatrix.needsUpdate = true;
   });
 
   return (
@@ -58,7 +62,8 @@ function Particles({ count = 300 }: { count?: number }) {
 
 // ── Volumetric light beams ────────────────────────────────────────
 function LightBeams() {
-  const group = useRef<THREE.Group>(null);
+  const group = useRef<THREE.Group | null>(null);
+
   useFrame(({ clock }) => {
     if (group.current) {
       group.current.rotation.y = clock.getElapsedTime() * 0.04;
@@ -77,13 +82,16 @@ function LightBeams() {
 }
 
 // ── Camera parallax via mouse ─────────────────────────────────────
-function CameraRig({ mouse }: { mouse: React.MutableRefObject<[number, number]> }) {
+function CameraRig({ mouse }: { mouse: MouseRef }) {
   const { camera } = useThree();
+
   useFrame(() => {
-    camera.position.x += (mouse.current[0] * 0.4 - camera.position.x) * 0.04;
-    camera.position.y += (mouse.current[1] * 0.2 - camera.position.y) * 0.04;
+    const [mouseX, mouseY] = mouse.current ?? [0, 0];
+    camera.position.x += (mouseX * 0.4 - camera.position.x) * 0.04;
+    camera.position.y += (mouseY * 0.2 - camera.position.y) * 0.04;
     camera.lookAt(0, 0, 0);
   });
+
   return null;
 }
 
@@ -91,7 +99,7 @@ function CameraRig({ mouse }: { mouse: React.MutableRefObject<[number, number]> 
 export default function ThreeScene({
   mouseRef,
 }: {
-  mouseRef: React.MutableRefObject<[number, number]>;
+  mouseRef: MouseRef;
 }) {
   return (
     <Canvas

@@ -1,6 +1,11 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-cyan-400: #00eaff;
+  --color-cyan-500: #00c8dd;
+  --color-cyan-900: #001a22;
+  --font-mono: "Courier New", Courier, monospace;
+}
 
 :root {
   --cyan: #00eaff;
@@ -13,15 +18,24 @@
   --green-neon: #00ffaa;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-html, body {
+html,
+body {
   background: var(--hud-bg);
   color: var(--cyan);
-  font-family: 'Courier New', monospace;
+  font-family: var(--font-mono);
   overflow: hidden;
   height: 100%;
   width: 100%;
+}
+
+body {
+  min-height: 100vh;
 }
 
 /* ── Glass Panel Base ─────────────────────────────────────── */
@@ -117,12 +131,13 @@ html, body {
   color: rgba(0, 234, 255, 0.5);
   border-radius: 4px;
   cursor: pointer;
-  font-family: 'Courier New', monospace;
+  font-family: var(--font-mono);
   transition: all 0.2s ease;
   text-transform: uppercase;
 }
 
-.mode-btn:hover, .mode-btn.active {
+.mode-btn:hover,
+.mode-btn.active {
   border-color: var(--cyan);
   color: var(--cyan);
   background: rgba(0, 234, 255, 0.1);
@@ -139,43 +154,110 @@ html, body {
   font-size: 9px;
 }
 
-.stat-key { color: rgba(0, 234, 255, 0.4); letter-spacing: 0.1em; }
-.stat-val { color: var(--cyan); font-weight: bold; }
+.stat-key {
+  color: rgba(0, 234, 255, 0.4);
+  letter-spacing: 0.1em;
+}
+
+.stat-val {
+  color: var(--cyan);
+  font-weight: bold;
+}
 
 /* ── Status dot ──────────────────────────────────────────── */
-.status-online { background: #00ff88; box-shadow: 0 0 6px #00ff88; }
-.status-warn   { background: #ffaa00; box-shadow: 0 0 6px #ffaa00; }
-.status-error  { background: #ff4455; box-shadow: 0 0 6px #ff4455; }
+.status-online {
+  background: #00ff88;
+  box-shadow: 0 0 6px #00ff88;
+}
+
+.status-warn {
+  background: #ffaa00;
+  box-shadow: 0 0 6px #ffaa00;
+}
+
+.status-error {
+  background: #ff4455;
+  box-shadow: 0 0 6px #ff4455;
+}
 
 /* ── Geo map styles ──────────────────────────────────────── */
 .geo-pin {
   animation: geoPulse 2s ease-in-out infinite;
 }
+
 @keyframes geoPulse {
-  0%, 100% { r: 4; opacity: 1; }
-  50% { r: 7; opacity: 0.5; }
+  0%,
+  100% {
+    r: 4;
+    opacity: 1;
+  }
+
+  50% {
+    r: 7;
+    opacity: 0.5;
+  }
 }
 
 /* ── Holographic flicker ─────────────────────────────────── */
 @keyframes flicker {
-  0%, 95%, 100% { opacity: 1; }
-  96% { opacity: 0.85; }
-  97% { opacity: 1; }
-  98% { opacity: 0.7; }
-  99% { opacity: 1; }
+  0%,
+  95%,
+  100% {
+    opacity: 1;
+  }
+
+  96% {
+    opacity: 0.85;
+  }
+
+  97% {
+    opacity: 1;
+  }
+
+  98% {
+    opacity: 0.7;
+  }
+
+  99% {
+    opacity: 1;
+  }
 }
-.holo-flicker { animation: flicker 4s steps(1) infinite; }
+
+.holo-flicker {
+  animation: flicker 4s steps(1) infinite;
+}
 
 /* ── Ring animations ─────────────────────────────────────── */
-@keyframes ringA { to { transform: rotate(360deg); } }
-@keyframes ringB { to { transform: rotate(-360deg); } }
-.ring-a { animation: ringA 3s linear infinite; }
-.ring-b { animation: ringB 5s linear infinite; }
+@keyframes ringA {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ringB {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+.ring-a {
+  animation: ringA 3s linear infinite;
+}
+
+.ring-b {
+  animation: ringB 5s linear infinite;
+}
 
 /* ── Recharts custom ─────────────────────────────────────── */
 .recharts-cartesian-grid-horizontal line,
 .recharts-cartesian-grid-vertical line {
   stroke: rgba(0, 234, 255, 0.07) !important;
 }
-.recharts-text { fill: rgba(0, 234, 255, 0.4) !important; font-size: 8px !important; }
-.recharts-tooltip-wrapper { z-index: 100; }
+.recharts-text {
+  fill: rgba(0, 234, 255, 0.4) !important;
+  font-size: 8px !important;
+}
+
+.recharts-tooltip-wrapper {
+  z-index: 100;
+}
